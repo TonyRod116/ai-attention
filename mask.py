@@ -45,8 +45,15 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    # TODO: Implement this function
-    raise NotImplementedError
+    # Get the input_ids tensor and convert to numpy array
+    input_ids = inputs['input_ids'].numpy()[0]  # Get first (and only) sequence
+    
+    # Find the index of the mask token
+    for i, token_id in enumerate(input_ids):
+        if token_id == mask_token_id:
+            return i
+    
+    return None
 
 
 
@@ -55,8 +62,14 @@ def get_color_for_attention_score(attention_score):
     Return a tuple of three integers representing a shade of gray for the
     given `attention_score`. Each value should be in the range [0, 255].
     """
-    # TODO: Implement this function
-    raise NotImplementedError
+    # Convert attention score to grayscale value (0-255)
+    # Linear mapping: 0 -> 0 (black), 1 -> 255 (white)
+    gray_value = int(attention_score * 255)
+    
+    # Ensure the value is within bounds
+    gray_value = max(0, min(255, gray_value))
+    
+    return (gray_value, gray_value, gray_value)
 
 
 
@@ -70,13 +83,23 @@ def visualize_attentions(tokens, attentions):
     include both the layer number (starting count from 1) and head number
     (starting count from 1).
     """
-    # TODO: Update this function to produce diagrams for all layers and heads.
-    generate_diagram(
-        1,
-        1,
-        tokens,
-        attentions[0][0][0]
-    )
+    # Loop through all 12 layers
+    for layer_idx in range(len(attentions)):
+        layer_number = layer_idx + 1  # 1-indexed
+        
+        # Loop through all 12 heads in each layer
+        for head_idx in range(attentions[layer_idx].shape[1]):
+            head_number = head_idx + 1  # 1-indexed
+            
+            # Get attention weights for this layer and head
+            # attentions[layer_idx][0][head_idx] where:
+            # - layer_idx: layer (0-11)
+            # - 0: beam (always 0)
+            # - head_idx: head (0-11)
+            attention_matrix = attentions[layer_idx][0][head_idx]
+            
+            # Generate diagram for this layer and head
+            generate_diagram(layer_number, head_number, tokens, attention_matrix)
 
 
 def generate_diagram(layer_number, head_number, tokens, attention_weights):
