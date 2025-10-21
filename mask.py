@@ -56,7 +56,6 @@ def get_mask_token_index(mask_token_id, inputs):
     return None
 
 
-
 def get_color_for_attention_score(attention_score):
     """
     Return a tuple of three integers representing a shade of gray for the
@@ -70,7 +69,6 @@ def get_color_for_attention_score(attention_score):
     gray_value = max(0, min(255, gray_value))
     
     return (gray_value, gray_value, gray_value)
-
 
 
 def visualize_attentions(tokens, attentions):
